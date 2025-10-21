@@ -1,0 +1,71 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# ---- Virtualenvs ----
+.venv/
+venv/
+ENV/
+env/
+.Python
+
+# ---- Byte-compiled / Logs ----
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+
+# ---- Alembic ----
+alembic/versions/*.pyc
+alembic/versions/__pycache__/
+# keep migration scripts but ignore pycache
+!alembic/versions/
+# (optional) ignore generated SQLite test db
+*.sqlite
+
+# ---- Environment / Config ----
+*.ini.bak
+
+# ---- Caches ----
+.cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ---- Editors / IDEs ----
+.vscode/
+.idea/
+*.iml
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db
+
+# ---- Docker ----
+*.pid
+*.seed
+*.tar
+.dockerignore
+
+# ---- Build ----
+build/
+dist/
+*.egg-info/
+
+# ---- Project logs ----
+logs/
+logs/*.log
+
+files

@@ -1,0 +1,59 @@
+{
+  "name": "find-south",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "NUXT_ENV_MODE=development nuxt dev",
+    "dev:lan": "npm run compress-images && NUXT_ENV_MODE=development nuxt dev --host 0.0.0.0 --port 5173 --strictPort",
+    "dev:fast": " NUXT_ENV_MODE=development nuxt dev",
+    "build": "NUXT_ENV_MODE=development nuxt build",
+    "generate:dev": "npm run update:content && NUXT_ENV_MODE=development nuxt generate",
+    "preview": "NUXT_ENV_MODE=development nuxt preview",
+    "postinstall": "NUXT_ENV_MODE=development nuxt prepare",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.4.0",
+    "@nuxt/image": "^1.10.0",
+    "@nuxt/ui": "^3.3.2",
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@nuxtjs/robots": "^5.2.10",
+    "@nuxtjs/sitemap": "^7.2.10",
+    "@nuxtjs/tailwindcss": "^6.13.2",
+    "@observablehq/inspector": "^5.0.1",
+    "@observablehq/plot": "^0.6.17",
+    "@observablehq/runtime": "^6.0.0",
+    "@pinia/nuxt": "^0.11.0",
+    "better-sqlite3": "^12.2.0",
+    "d3": "^7.9.0",
+    "dotenv-flow": "^4.1.0",
+    "echarts": "^5.6.0",
+    "fast-glob": "^3.3.3",
+    "minisearch": "^7.1.2",
+    "moment": "^2.30.1",
+    "nuxt": "^3.16.2",
+    "pinia": "^3.0.2",
+    "pinia-plugin-persistedstate": "^4.2.0",
+    "prettier": "^3.6.2",
+    "sharp": "^0.34.2",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@iconify-json/bi": "^1.2.4",
+    "@iconify-json/heroicons": "^1.2.2",
+    "@iconify-json/heroicons-outline": "^1.2.1",
+    "@iconify-json/lucide": "^1.2.49",
+    "@iconify-json/ri": "^1.2.5",
+    "@iconify/json": "^2.2.349",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "@tailwindcss/typography": "^0.5.16",
+    "sharp-cli": "^5.2.0",
+    "unplugin-icons": "^0.22.0",
+    "zod": "^3.24.3"
+  },
+  "resolutions": {
+    "cookie": "0.7.2"
+  }
+}

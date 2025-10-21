@@ -1,0 +1,15 @@
+# builds & deps
+node_modules
+.nuxt
+.output
+dist
+.build
+
+# env/files
+*.log
+*.lock
+.env*
+coverage
+
+# images & generated
+public/
