@@ -1,0 +1,57 @@
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Make Tailwind aware of your custom colors */
+@theme static {
+  /* === Neutral brand palette (refined slate) used for layout/surfaces === */
+
+  /* === Primary palette (teal) used for interactive elements === */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488; /* main brand */
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+  --color-primary: var(--color-primary-600);
+
+  /* Secondary (indigo) - kept for legacy usage if any */
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-200: #c7d2fe;
+  --color-indigo-300: #a5b4fc;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #5458cf;
+  --color-indigo-700: #4649ad;
+  --color-indigo-800: #383a8b;
+  --color-indigo-900: #2a2c69;
+}
+
+:root {
+  --ui-radius: 0rem;
+  /* Map Nuxt UI primary to the new primary palette */
+  --ui-primary: var(--color-primary-600);
+  --ui-primary-foreground: #ffffff;
+}
+
+:root {
+  --ui-radius: 0rem;
+  /* Map Nuxt UI primary to the new primary palette (override) */
+  --ui-primary: var(--color-primary-600);
+  --ui-primary-foreground: #ffffff;
+}
+
+:root {
+  --ui-radius: 0rem;
+  /* Map Nuxt UI primary to the new primary palette (override) */
+  --ui-primary: var(--color-primary-600);
+  --ui-primary-foreground: #ffffff;
+}

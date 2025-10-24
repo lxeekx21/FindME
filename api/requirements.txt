@@ -1,0 +1,26 @@
+fastapi
+uvicorn[standard]
+pydantic>=2
+pydantic-settings
+SQLAlchemy>=2
+asyncpg
+alembic
+python-dotenv
+httpx
+python-jose[cryptography]
+passlib[bcrypt]
+email-validator
+tenacity
+loguru
+greenlet
+# Dev
+black
+isort
+flake8
+pytest
+pytest-asyncio
+psycopg2-binary
+python-multipart
+aiohttp
+Pillow
+gradio_client
