@@ -23,7 +23,7 @@ router = APIRouter(prefix="/submissions", tags=["submissions"])
 async def list_submissions(
     db: AsyncSession = Depends(get_db),
     page: int = 1,
-    limit: int = 100,
+    limit: int = 1000,
 ):
     # Normalize and cap pagination params
     page = max(1, page)
