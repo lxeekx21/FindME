@@ -368,92 +368,100 @@ function viewSubmission(id: number) {
   <div>
     <!-- Hero -->
     <section class="bg-white">
-      <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div class="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-         <div class="text-center font-sans">
-        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-widest text-neutral-900 uppercase">
+      <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+         <div class="text-center md:text-left font-sans">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-widest text-neutral-900 uppercase">
           Help Bring Them Home
         </h1>
-        <p class="mt-2 max-w-2xl text-neutral-600">
+        <p class="mt-2 text-sm sm:text-base max-w-2xl text-neutral-600">
           Every lead brings hope closer to home. Lets help them reunite together. 
         </p>
          </div>
-          <div class="flex w-full max-w-md items-center gap-2 md:w-auto">
-            <input v-model="q" type="text" placeholder="Search by name or case" class="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200" />
-            <button class="rounded-md border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-50" @click="q = ''">Clear</button>
+          <div class="flex w-full max-w-md items-center gap-2 md:w-auto mx-auto md:mx-0">
+            <input v-model="q" type="text" placeholder="Search by name or case" class="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200" />
+            <button class="rounded-md border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-50 whitespace-nowrap" @click="q = ''">Clear</button>
           </div>
         </div>
 
         <!-- Filters bar -->
-        <div class="mt-6 flex flex-wrap items-center gap-3">
-          <div>
-            <label class="mr-2 text-sm text-neutral-600">Status</label>
-            <select v-model="statusFilter" class="rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
-              <option :value="null">All</option>
-              <option v-for="s in STATUSES" :key="s" :value="s">{{ s.charAt(0).toUpperCase() + s.slice(1) }}</option>
-            </select>
-          </div>
-          <div>
-            <label class="mr-2 text-sm text-neutral-600">Gender</label>
-            <select v-model="gender" class="rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
-              <option :value="null">Any</option>
-              <option v-for="g in GENDERS" :key="g" :value="g">{{ g.charAt(0).toUpperCase() + g.slice(1) }}</option>
-            </select>
-          </div>
-          <div>
-            <label class="mr-2 text-sm text-neutral-600">Province</label>
-            <select v-model="province" class="rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
-              <option :value="null">Any</option>
-              <option v-for="p in PROVINCES" :key="p" :value="p">{{ p.split('_').map(s=>s[0].toUpperCase()+s.slice(1)).join(' ') }}</option>
-            </select>
-          </div>
-          <div>
-            <label class="mr-2 text-sm text-neutral-600">Sort by</label>
-            <select v-model="sortOrder" class="rounded-md border border-neutral-300 px-2 py-1.5 text-sm disabled:opacity-60" :disabled="viewMode === 'map'">
-              <option value="new">Newest</option>
-              <option value="oldest">Oldest</option>
-            </select>
-          </div>
-          <div>
-            <label class="mr-2 text-sm text-neutral-600">Show</label>
-            <select v-model="sizeChoice" class="rounded-md border border-neutral-300 px-2 py-1.5 text-sm disabled:opacity-60" :disabled="viewMode === 'map'">
-              <option value="12">12</option>
-              <option value="24">24</option>
-              <option value="48">48</option>
-              <option value="all">All</option>
-            </select>
-            <span class="ml-1 text-sm text-neutral-500">per page</span>
-          </div>
-          <!-- View toggle -->
-          <div class="ml-auto flex items-center gap-2">
-            <div class="inline-flex overflow-hidden rounded-md border border-neutral-300 bg-white">
-              <button
-                type="button"
-                :aria-pressed="viewMode === 'grid'"
-                :class="[
-                  'appearance-none px-3 py-1.5 text-sm font-medium whitespace-nowrap min-w-16 text-center',
-                  viewMode === 'grid' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-50'
-                ]"
-                @click="viewMode = 'grid'"
-              >
-                Cards
-              </button>
-              <button
-                type="button"
-                :aria-pressed="viewMode === 'map'"
-                :class="[
-                  'appearance-none px-3 py-1.5 text-sm font-medium whitespace-nowrap min-w-16 text-center border-l border-neutral-300',
-                  viewMode === 'map' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-50'
-                ]"
-                @click="viewMode = 'map'"
-              >
-                Map
-              </button>
+        <div class="mt-6 space-y-4">
+          <!-- Mobile: 2 columns, Desktop: 4 columns -->
+          <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-neutral-700">Status</label>
+              <select v-model="statusFilter" class="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
+                <option :value="null">All</option>
+                <option v-for="s in STATUSES" :key="s" :value="s">{{ s.charAt(0).toUpperCase() + s.slice(1) }}</option>
+              </select>
             </div>
-            <div class="flex items-center gap-2 text-sm text-neutral-600">
-              <span>{{ total }} cases</span>
-              <span v-if="isApiLoading" class="inline-flex items-center gap-1 text-neutral-500"><span class="h-2 w-2 animate-pulse rounded-full bg-neutral-400"></span> Loading…</span>
-              <span v-if="lastError" class="text-red-600">Error loading</span>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-neutral-700">Gender</label>
+              <select v-model="gender" class="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
+                <option :value="null">Any</option>
+                <option v-for="g in GENDERS" :key="g" :value="g">{{ g.charAt(0).toUpperCase() + g.slice(1) }}</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-neutral-700">Province</label>
+              <select v-model="province" class="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
+                <option :value="null">Any</option>
+                <option v-for="p in PROVINCES" :key="p" :value="p">{{ p.split('_').map(s=>s[0].toUpperCase()+s.slice(1)).join(' ') }}</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-neutral-700">Sort by</label>
+              <select v-model="sortOrder" class="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm disabled:opacity-60" :disabled="viewMode === 'map'">
+                <option value="new">Newest</option>
+                <option value="oldest">Oldest</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Bottom row: Show per page, View toggle, and count -->
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+              <label class="text-sm font-medium text-neutral-700 sm:text-neutral-600">Show</label>
+              <select v-model="sizeChoice" class="rounded-md border border-neutral-300 px-2 py-1.5 text-sm disabled:opacity-60" :disabled="viewMode === 'map'">
+                <option value="12">12</option>
+                <option value="24">24</option>
+                <option value="48">48</option>
+                <option value="all">All</option>
+              </select>
+              <span class="text-sm text-neutral-500">per page</span>
+            </div>
+            
+            <!-- View toggle and count -->
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="inline-flex overflow-hidden rounded-md border border-neutral-300 bg-white">
+                <button
+                  type="button"
+                  :aria-pressed="viewMode === 'grid'"
+                  :class="[
+                    'appearance-none px-3 py-1.5 text-sm font-medium whitespace-nowrap min-w-16 text-center',
+                    viewMode === 'grid' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-50'
+                  ]"
+                  @click="viewMode = 'grid'"
+                >
+                  Cards
+                </button>
+                <button
+                  type="button"
+                  :aria-pressed="viewMode === 'map'"
+                  :class="[
+                    'appearance-none px-3 py-1.5 text-sm font-medium whitespace-nowrap min-w-16 text-center border-l border-neutral-300',
+                    viewMode === 'map' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-50'
+                  ]"
+                  @click="viewMode = 'map'"
+                >
+                  Map
+                </button>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-neutral-600">
+                <span>{{ total }} cases</span>
+                <span v-if="isApiLoading" class="inline-flex items-center gap-1 text-neutral-500"><span class="h-2 w-2 animate-pulse rounded-full bg-neutral-400"></span> Loading…</span>
+                <span v-if="lastError" class="text-red-600">Error loading</span>
+              </div>
             </div>
           </div>
         </div>

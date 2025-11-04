@@ -72,14 +72,14 @@ const avatarUrl = computed(() => {
     </div>
 
     <!-- Mobile menu -->
-    <div v-if="menuOpen" class="md:hidden border-t border-neutral-200 bg-white">
+    <div v-if="menuOpen" class="md:hidden border-t border-primary-800 bg-primary-700">
       <div class="space-y-2 px-4 py-3">
         <template v-if="isAuthenticated">
-          <button class="w-full text-left rounded-md border border-neutral-200 px-3 py-2 text-sm" @click="goDashboard">Dashboard</button>
+          <button class="w-full text-left rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/20" @click="goDashboard">Dashboard</button>
         </template>
         <template v-else>
-          <button class="w-full text-left rounded-md px-3 py-2 text-sm" @click="goLogin">Login</button>
-          <button class="w-full text-left rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white" @click="goRegister">Create account</button>
+          <button class="w-full text-left rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/20" @click="goLogin">Login</button>
+          <button class="w-full text-left rounded-md bg-white px-3 py-2 text-sm font-medium text-primary-700 hover:bg-neutral-50" @click="goRegister">Create account</button>
         </template>
       </div>
     </div>
