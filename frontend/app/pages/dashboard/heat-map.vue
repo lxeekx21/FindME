@@ -81,8 +81,8 @@ function ensureMapsScript(): Promise<void> {
 function pointsForMetric(): Array<{ lat: number; lng: number }> {
   const statusMap: Record<'Missing' | 'found_alive' | 'found_dead', string> = {
     Missing: 'published',
-    found_alive: 'Found Alive',
-    found_dead: 'Found Dead',
+    found_alive: 'found_alive',
+    found_dead: 'found_dead',
   }
   const want = statusMap[metric.value]
   const pts: Array<{ lat: number; lng: number }> = []
