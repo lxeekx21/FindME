@@ -226,7 +226,7 @@ onBeforeUnmount(() => {
         <div class="mt-1 text-2xl font-semibold">{{ formatPct(data?.found_rate ?? 0) }}</div>
       </div>
       <div class="rounded-md border border-neutral-200 bg-white p-4">
-        <div class="text-sm text-neutral-500">Found alive</div>
+        <div class="text-sm text-neutral-500">Found Alive</div>
         <div class="mt-1 text-2xl font-semibold">{{ data?.found_alive_count ?? 0 }}</div>
       </div>
       <div class="rounded-md border border-neutral-200 bg-white p-4">

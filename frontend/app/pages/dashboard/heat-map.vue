@@ -21,7 +21,7 @@ const apiKey: string | undefined = publicCfg.googleMapsApiKey
 const mapId: string | undefined = (publicCfg as any).googleMapsMapId
 
 const submissions = ref<Submission[]>([])
-const metric = ref<'missing' | 'found_alive' | 'found_dead'>('missing')
+const metric = ref<'Missing' | 'found_alive' | 'found_dead'>('Missing')
 
 // Map refs/state
 const mapEl = ref<HTMLDivElement | null>(null)
@@ -79,10 +79,10 @@ function ensureMapsScript(): Promise<void> {
 }
 
 function pointsForMetric(): Array<{ lat: number; lng: number }> {
-  const statusMap: Record<'missing' | 'found_alive' | 'found_dead', string> = {
-    missing: 'published',
-    found_alive: 'found_alive',
-    found_dead: 'found_dead',
+  const statusMap: Record<'Missing' | 'found_alive' | 'found_dead', string> = {
+    Missing: 'published',
+    found_alive: 'Found Alive',
+    found_dead: 'Found Dead',
   }
   const want = statusMap[metric.value]
   const pts: Array<{ lat: number; lng: number }> = []
@@ -105,7 +105,7 @@ function clearHeatOverlays() {
 
 function colorForMetric(): string {
   // teal for missing, green for alive, red for deceased
-  if (metric.value === 'missing') return '#0d9488'
+  if (metric.value === 'Missing') return '#0d9488'
   if (metric.value === 'found_alive') return '#22c55e'
   return '#ef4444'
 }
@@ -222,9 +222,9 @@ onMounted(async () => {
       <div class="inline-flex overflow-hidden rounded-md border border-neutral-300 bg-white">
         <button
           type="button"
-          :aria-pressed="metric === 'missing'"
-          :class="['appearance-none px-3 py-1.5 text-sm font-medium whitespace-nowrap min-w-20 text-center', metric === 'missing' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-50']"
-          @click="metric = 'missing'"
+          :aria-pressed="metric === 'Missing'"
+          :class="['appearance-none px-3 py-1.5 text-sm font-medium whitespace-nowrap min-w-20 text-center', metric === 'Missing' ? 'bg-primary-600 text-white' : 'bg-white text-neutral-700 hover:bg-neutral-50']"
+          @click="metric = 'Missing'"
         >Missing</button>
         <button
           type="button"
@@ -255,7 +255,7 @@ onMounted(async () => {
           <!-- Legend -->
           <div class="absolute bottom-3 left-3 rounded-md bg-white/90 px-3 py-2 text-xs text-neutral-700 shadow">
             <div class="font-medium mb-1">Legend</div>
-            <div v-if="metric === 'missing'">Teal intensity shows concentration of active missing cases (status: published).</div>
+            <div v-if="metric === 'Missing'">Teal intensity shows concentration of active missing cases (status: published).</div>
             <div v-else-if="metric === 'found_alive'">Green intensity shows concentration of cases found alive.</div>
             <div v-else>Red intensity shows concentration of cases found deceased.</div>
           </div>
