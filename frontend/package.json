@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NUXT_ENV_MODE=development nuxt dev",
-    "dev:lan": "npm run compress-images && NUXT_ENV_MODE=development nuxt dev --host 0.0.0.0 --port 5173 --strictPort",
+    "dev:lan": "cross-env NUXT_ENV_MODE=development nuxt dev --host 0.0.0.0 --port 5173 --strictPort",
     "dev:fast": " NUXT_ENV_MODE=development nuxt dev",
     "build": "NUXT_ENV_MODE=development nuxt build",
     "generate:dev": "npm run update:content && NUXT_ENV_MODE=development nuxt generate",
