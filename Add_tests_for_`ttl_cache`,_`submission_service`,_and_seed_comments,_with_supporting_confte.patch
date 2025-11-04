@@ -1,0 +1,308 @@
+Subject: [PATCH] Add tests for `ttl_cache`, `submission_service`, and seed comments, with supporting conftest.
+---
+Index: api/tests/test_cache.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/tests/test_cache.py b/api/tests/test_cache.py
+new file mode 100644
+--- /dev/null	(date 1762193568020)
++++ b/api/tests/test_cache.py	(date 1762193568020)
+@@ -0,0 +1,60 @@
++import asyncio
++import time
++
++import pytest
++
++from app.core.cache import ttl_cache, TTLCache, _global_cache
++
++
++def test_ttl_cache_sync_caches_and_expires(monkeypatch):
++    # Ensure we start with a clean cache
++    _global_cache.clear()
++
++    calls = {"count": 0}
++
++    @ttl_cache(ttl_seconds=1)
++    def compute(x):
++        calls["count"] += 1
++        return x * 2
++
++    # First call computes
++    assert compute(3) == 6
++    assert calls["count"] == 1
++    # Second call within TTL uses cache
++    assert compute(3) == 6
++    assert calls["count"] == 1
++
++    # Different argument should bypass cache (different key)
++    assert compute(4) == 8
++    assert calls["count"] == 2
++
++    # After TTL expires, it should recompute
++    time.sleep(1.1)
++    assert compute(3) == 6
++    assert calls["count"] == 3
++
++
++@pytest.mark.asyncio
++async def test_ttl_cache_async_caches_and_expires():
++    _global_cache.clear()
++
++    calls = {"count": 0}
++
++    @ttl_cache(ttl_seconds=1)
++    async def acompute(x):
++        calls["count"] += 1
++        await asyncio.sleep(0)  # exercise async path
++        return x + 5
++
++    # First call computes
++    assert await acompute(10) == 15
++    assert calls["count"] == 1
++
++    # Second call within TTL should use cache
++    assert await acompute(10) == 15
++    assert calls["count"] == 1
++
++    # Wait for expiry and call again
++    await asyncio.sleep(1.1)
++    assert await acompute(10) == 15
++    assert calls["count"] == 2
+Index: api/tests/test_submission_service.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/tests/test_submission_service.py b/api/tests/test_submission_service.py
+new file mode 100644
+--- /dev/null	(date 1762193845285)
++++ b/api/tests/test_submission_service.py	(date 1762193845285)
+@@ -0,0 +1,133 @@
++from datetime import datetime, timezone
++import pytest
++
++from app.services.submission_service import SubmissionService
++from app.models.submission_models import (
++    SubmissionCreateDTO,
++    SubmissionUpdateDTO,
++)
++
++
++class FakeSubmission:
++    def __init__(self, **kwargs):
++        self.__dict__.update(kwargs)
++
++
++class FakeRepo:
++    def __init__(self):
++        self.created = []
++        self.updated = []
++        self.deleted = []
++        self.summarize_calls = 0
++
++    async def get_by_id(self, id):
++        if id == 1:
++            return FakeSubmission(
++                id=1,
++                title="t",
++                full_name="fn",
++                dob=None,
++                gender=None,
++                race=None,
++                height=None,
++                weight=None,
++                province=None,
++                description=None,
++                status="pending",
++                last_seen_address=None,
++                last_seen_place_id=None,
++                last_seen_lat=None,
++                last_seen_lng=None,
++                images=[],
++                user_id=2,
++                created_at=datetime.now(timezone.utc),
++            )
++        return None
++
++    async def list(self, limit=500, offset=0):
++        return [await self.get_by_id(1)]
++
++    async def list_by_user(self, user_id, limit=500, offset=0):
++        if user_id == 2:
++            return [await self.get_by_id(1)]
++        return []
++
++    async def create(self, **payload):
++        self.created.append(payload)
++        return FakeSubmission(id=99, created_at=pytest.datetime.datetime.now(pytest.datetime.timezone.utc), **payload)
++
++    async def update(self, id, **payload):
++        self.updated.append((id, payload))
++        return FakeSubmission(id=id, created_at=pytest.datetime.datetime.now(pytest.datetime.timezone.utc), **payload)
++
++    async def delete(self, id):
++        self.deleted.append(id)
++        return True
++
++    async def summarize(self):
++        self.summarize_calls += 1
++        return {"total_submissions": 1, "status_counts": {"pending": 1}}
++
++
++@pytest.fixture(autouse=True)
++def patch_repo(monkeypatch):
++    # Patch the repository the service constructs
++    monkeypatch.setattr(
++        "app.services.submission_service.SubmissionRepository",
++        lambda session: FakeRepo(),
++    )
++
++
++def make_service():
++    class DummySession:
++        pass
++
++    return SubmissionService(DummySession())
++
++
++@pytest.mark.asyncio
++async def test_create_sets_defaults_and_returns_dto():
++    svc = make_service()
++    dto = SubmissionCreateDTO(
++        title="Missing Person",
++        full_name="John Doe",
++        description="desc",
++    )
++    res = await svc.create(dto, user_id=5, images=None)
++    assert res.id == 99
++    assert res.status == "pending"
++    assert res.images == []
++    assert res.user_id == 5
++
++
++@pytest.mark.asyncio
++async def test_list_and_get_convert_to_dto():
++    svc = make_service()
++    items = await svc.list()
++    assert len(items) == 1
++    one = await svc.get(1)
++    assert one is not None and one.id == 1
++
++
++@pytest.mark.asyncio
++async def test_update_and_delete():
++    svc = make_service()
++    upd = SubmissionUpdateDTO(description="new")
++    updated = await svc.update(1, upd)
++    assert updated is not None
++    assert updated.description == "new"
++    ok = await svc.delete(1)
++    assert ok is True
++
++
++@pytest.mark.asyncio
++async def test_summarize_is_cached_within_ttl(monkeypatch):
++    svc = make_service()
++    # access underlying fake
++    fake_repo = svc.repo
++    out1 = await svc.summarize()
++    out2 = await svc.summarize()
++    assert out1.total_submissions == 1
++    assert out2.total_submissions == 1
++    # Only one underlying call due to ttl_cache
++    assert fake_repo.summarize_calls == 1
+Index: api/tests/test_seed_comments.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/tests/test_seed_comments.py b/api/tests/test_seed_comments.py
+new file mode 100644
+--- /dev/null	(date 1762193671081)
++++ b/api/tests/test_seed_comments.py	(date 1762193671081)
+@@ -0,0 +1,64 @@
++import random
++from datetime import datetime, timedelta, timezone
++
++import pytest
++
++from scripts.seed_test_data import seed_comments
++
++
++class FakeSubmission:
++    def __init__(self, id, created_at):
++        self.id = id
++        self.created_at = created_at
++
++
++class FakeSubmissionRepo:
++    def __init__(self, subs):
++        # subs: dict id->FakeSubmission
++        self._subs = subs
++
++    async def get_by_id(self, id):
++        return self._subs.get(id)
++
++
++class FakeCommentRepo:
++    def __init__(self):
++        self.created = []
++
++    async def create(self, **payload):
++        self.created.append(payload)
++        return {"id": len(self.created), **payload}
++
++
++@pytest.mark.asyncio
++async def test_seed_comments_creates_within_bounds_and_not_future(monkeypatch):
++    # Deterministic randomness
++    random.seed(1234)
++
++    # Prepare fake data: 3 submissions with base created_at 2 days ago
++    base_dt = datetime.now(timezone.utc) - timedelta(days=2)
++    subs = {i: FakeSubmission(i, base_dt + timedelta(minutes=i)) for i in range(1, 4)}
++
++    fake_sub_repo = FakeSubmissionRepo(subs)
++    fake_com_repo = FakeCommentRepo()
++
++    # Patch repositories used inside the function
++    monkeypatch.setattr("scripts.seed_test_data.SubmissionRepository", lambda sess: fake_sub_repo)
++    monkeypatch.setattr("scripts.seed_test_data.CommentRepository", lambda sess: fake_com_repo)
++
++    # Execute with a target total to make assertions deterministic
++    total = await seed_comments(db_session=object(), submission_ids=list(subs.keys()), candidate_user_ids=[10, 11, 12], target_total=20)
++
++    assert total == 20
++    assert len(fake_com_repo.created) == 20
++
++    now = datetime.now(timezone.utc)
++    for c in fake_com_repo.created:
++        assert c["submission_id"] in subs
++        assert c["user_id"] in {10, 11, 12}
++        assert c["created_at"] <= now
++        assert isinstance(c["body"], str) and len(c["body"]) > 0
++        assert c["status"] in {"approved", "pending", "rejected"}
++        # rejection_reason can be None or str; ensure type compliance
++        rr = c.get("rejection_reason")
++        assert rr is None or isinstance(rr, str)
+Index: api/tests/conftest.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/tests/conftest.py b/api/tests/conftest.py
+new file mode 100644
+--- /dev/null	(date 1762193694720)
++++ b/api/tests/conftest.py	(date 1762193694720)
+@@ -0,0 +1,7 @@
++# Ensure 'app' package imports resolve when running tests from the api/ directory
++import sys
++from pathlib import Path
++
++api_root = Path(__file__).resolve().parents[1]
++if str(api_root) not in sys.path:
++    sys.path.insert(0, str(api_root))
+diff --git a/api/scripts/__init__.py b/api/scripts/__init__.py
+new file mode 100644
