@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NUXT_ENV_MODE=development nuxt dev",
+    "dev": "cross-env NUXT_ENV_MODE=development nuxt dev",
     "dev:lan": "npm run compress-images && NUXT_ENV_MODE=development nuxt dev --host 0.0.0.0 --port 5173 --strictPort",
     "dev:fast": " NUXT_ENV_MODE=development nuxt dev",
     "build": "NUXT_ENV_MODE=development nuxt build",
     "generate:dev": "npm run update:content && NUXT_ENV_MODE=development nuxt generate",
     "preview": "NUXT_ENV_MODE=development nuxt preview",
-    "postinstall": "NUXT_ENV_MODE=development nuxt prepare",
+    "postinstall": "cross-env NUXT_ENV_MODE=development nuxt prepare",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -47,8 +47,9 @@
     "@iconify-json/lucide": "^1.2.49",
     "@iconify-json/ri": "^1.2.5",
     "@iconify/json": "^2.2.349",
-    "prettier-plugin-tailwindcss": "^0.6.14",
     "@tailwindcss/typography": "^0.5.16",
+    "cross-env": "^10.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.14",
     "sharp-cli": "^5.2.0",
     "unplugin-icons": "^0.22.0",
     "zod": "^3.24.3"

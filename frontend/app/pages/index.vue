@@ -370,12 +370,16 @@ function viewSubmission(id: number) {
     <section class="bg-white">
       <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div class="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">Help bring them home</h1>
-            <p class="mt-2 max-w-2xl text-neutral-600">Browse active cases of missing people. Share, report tips, and help families reunite.</p>
-          </div>
+         <div class="text-center font-sans">
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-widest text-neutral-900 uppercase">
+          Help Bring Them Home
+        </h1>
+        <p class="mt-2 max-w-2xl text-neutral-600">
+          Every lead brings hope closer to home. Lets help them reunite together. 
+        </p>
+         </div>
           <div class="flex w-full max-w-md items-center gap-2 md:w-auto">
-            <input v-model="q" type="text" placeholder="Search by name or case title" class="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200" />
+            <input v-model="q" type="text" placeholder="Search by name or case" class="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200" />
             <button class="rounded-md border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-50" @click="q = ''">Clear</button>
           </div>
         </div>
