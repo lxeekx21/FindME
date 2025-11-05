@@ -7,6 +7,10 @@ android {
     compileSdk {
         version = release(36)
     }
+    
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.example.findsouth"
@@ -16,6 +20,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Read server URL from environment variable or local.properties, with fallback
+        val serverUrl = project.findProperty("SERVER_URL") as String?
+            ?: System.getenv("SERVER_URL")
+            ?: "http://192.168.1.101:5173"
+        
+        buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
     }
 
     buildTypes {

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         // On Windows run "ipconfig" and look for IPv4 Address
         // Make sure your phone and computer are on the same Wi-Fi network
         // Example: "http://192.168.1.100:3000/"
-        webView.loadUrl("http://192.168.1.101:5173");
+        webView.loadUrl("https://findme-dashboard.mulanga.dev");
     }
 
     @Override

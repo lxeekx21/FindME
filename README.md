@@ -48,7 +48,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Copy env and configure DB + Auth0 values
-cp .env.example .env
+cp .env.local .env
 
 # (Optional) Create dev database
 chmod +x scripts/create_db.sh

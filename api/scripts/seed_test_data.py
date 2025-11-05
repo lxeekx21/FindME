@@ -38,11 +38,16 @@ from typing import List, Optional, Tuple
 
 import aiohttp
 import certifi
+from dotenv import load_dotenv
 
 # Ensure the project 'api' root is on sys.path so `app.*` imports work when running this script directly
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
+
+# Load environment variables from .env file
+BASE_DIR = Path(__file__).resolve().parents[1]        # .../api
+load_dotenv(BASE_DIR / ".env")
 
 from app.db.session import AsyncSessionLocal
 from app.db.repositories.users import UserRepository
@@ -56,7 +61,6 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT, datefmt="%H:%M:%S")
 logger = logging.getLogger("seed")
 
 # ------------ Paths (absolute to avoid CWD issues) ------------
-BASE_DIR = Path(__file__).resolve().parents[1]        # .../api
 FILES_DIR = BASE_DIR / "files"
 SUBS_DIR  = FILES_DIR / "submissions"
 
@@ -243,6 +247,15 @@ def build_submission_filename(user_id: int, ext: str = ".jpg") -> str:
     return f"sub_{user_id}_{uuid.uuid4().hex}{ext}"
 
 
+def get_base_url() -> str:
+    """Determine the base URL from API_BASE_URL environment variable."""
+    api_base_url = os.getenv("API_BASE_URL")
+    if api_base_url:
+        return api_base_url.strip()
+    # Fallback to default if not set
+    return "http://localhost:8000"
+
+
 async def save_profile_image(session_http: aiohttp.ClientSession, user_id: int, gender: Optional[str] = None) -> Optional[str]:
     # Try RandomUser first with a random index
     n = random.randint(0, 99)
@@ -276,8 +289,9 @@ async def save_profile_image(session_http: aiohttp.ClientSession, user_id: int, 
     path.write_bytes(img)
     logger.info("Wrote profile image: %s (%d bytes)", path, path.stat().st_size)
 
-    # Return relative URL so it works regardless of host
-    return f"http://localhost:8000/files/{filename}"
+    # Return URL with correct base URL based on environment
+    base_url = get_base_url()
+    return f"{base_url}/files/{filename}"
 
 
 def _estimate_age_from_image_bytes(img_bytes: bytes) -> Optional[int]:
